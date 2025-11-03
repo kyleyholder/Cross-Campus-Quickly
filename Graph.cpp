@@ -10,17 +10,17 @@ Graph::Graph(const std::unordered_map<std::string, FileParser::Node>& nodes,
 
     for (const auto& [wayID, nodeIDs] : ways){
       for (size_t i = 1; i < nodeIDs.size(); i++){
-        const std::string& start = nodeIDs[i - 1];
-        const std::string& end = nodeIDs[i];
+        const std::string& from = nodeIDs[i - 1];
+        const std::string& to = nodeIDs[i];
 
-        if (nodes.count(start) > 0 && nodes.count(end) > 0){
-          const FileParser::Node& node1 = nodes.at(start);
-          const FileParser::Node& node2 = nodes.at(end);
+        if (nodes.count(from) > 0 && nodes.count(to) > 0){
+          const FileParser::Node& node1 = nodes.at(from);
+          const FileParser::Node& node2 = nodes.at(to);
 
           double dist = calculateDistance(node1, node2);
 
-          adjacencyList[start].push_back({start, dist});
-          adjacencyList[end].push_back({end, dist});
+          adjacencyList[from].push_back({to, dist});
+          adjacencyList[to].push_back({from, dist});
         }
       }
     }
@@ -28,4 +28,10 @@ Graph::Graph(const std::unordered_map<std::string, FileParser::Node>& nodes,
 
 const std::unordered_map<std::string, std::vector<Edge>>& Graph::getAdjacencyList() const{
      return adjacencyList;
+}
+
+double Graph::calculateDistance(const FileParser::Node& node1, const FileParser::Node& node2){
+  double xDistance = node1.lon - node2.lon;
+  double yDistance = node1.lat - node2.lat;
+  return std::sqrt((xDistance * xDistance) + (yDistance * yDistance));
 }
