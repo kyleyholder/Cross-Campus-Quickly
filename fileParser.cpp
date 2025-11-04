@@ -167,8 +167,8 @@ void FileParser::parseWays(std::string fileName, QGraphicsScene &scene){
                     polygon << QPointF(x, y);
                 }
 
-                QPen pen(Qt::blue);
-                QBrush brush(Qt::blue);
+                QPen pen(QColor(0,153,255, 0));
+                QBrush brush(QColor(0,153,255));
 
                 scene.addPolygon(polygon, pen, brush);
             }else if (isPark) {

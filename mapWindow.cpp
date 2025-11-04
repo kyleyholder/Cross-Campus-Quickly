@@ -78,8 +78,8 @@ void MapWindow::drawWindow(std::string fileName) {
     //Setting font size and color for labels
     label1->setStyleSheet("color: white; font-size: 16px;");
     //labelDistanceOfPath->setStyleSheet("color: white; font-size: 16px;");
-    labelStartingPoint->setStyleSheet("color: white; font-size: 16px;");
-    labelDestination->setStyleSheet("color: white; font-size: 16px;");
+    labelStartingPoint->setStyleSheet("color: blue; font-size: 16px;");
+    labelDestination->setStyleSheet("color: red; font-size: 16px;");
     labelLongitude1->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
     labelLatitude1->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
     labelLongitude2->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
@@ -152,7 +152,7 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
         double xPosition = (((node.lon + 82) * 1000) + 391) * 29;
         double yPosition = 1002 - ((((node.lat - 29) * 1000) - 356) * 29);
 
-        point1 = scene.addEllipse(xPosition - 5, yPosition - 5, 10, 10, QPen(Qt::blue), QBrush(Qt::blue));
+        point1 = scene.addEllipse(xPosition - 5, yPosition - 5, 12, 12, QPen(Qt::blue), QBrush(Qt::blue));
 
     }else if (!secondClickStatus){
         secondClickStatus = true;
@@ -173,7 +173,7 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
         double xPosition = (((node.lon + 82) * 1000) + 391) * 29;
         double yPosition = 1002 - ((((node.lat - 29) * 1000) - 356) * 29);
 
-        point2 = scene.addEllipse(xPosition - 5, yPosition - 5, 10, 10, QPen(Qt::blue), QBrush(Qt::blue));
+        point2 = scene.addEllipse(xPosition - 5, yPosition - 5, 12, 12, QPen(Qt::red), QBrush(Qt::red));
 
 
         QString str = "Dijkstra's Algorithm";
@@ -187,7 +187,7 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
             }
 
             //Adding path to the scene in the loop
-            QPen pen(Qt::red, 3);
+            QPen pen(QColor(255, 102, 0, 255), 3);
             for (int i = 1; i < static_cast<int>(shortestPathToDraw.size()); ++i) {
                 FileParser::Node n1 = parser.nodes[shortestPathToDraw[i-1]];
                 FileParser::Node n2 = parser.nodes[shortestPathToDraw[i]];
@@ -203,7 +203,7 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
             }
 
             //Adding path to the scene in the loop
-            QPen pen(Qt::red, 3);
+            QPen pen(QColor(255, 102, 0, 255), 3);
             for (int i = 1; i < static_cast<int>(shortestPathToDraw.size()); ++i) {
                 FileParser::Node n1 = parser.nodes[shortestPathToDraw[i-1]];
                 FileParser::Node n2 = parser.nodes[shortestPathToDraw[i]];
