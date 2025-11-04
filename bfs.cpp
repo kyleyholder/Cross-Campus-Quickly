@@ -1,13 +1,11 @@
-//
-// Created by kyley on 11/1/2025.
-//
-#include "Graph.h"
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <vector>
-#include <string>
-#include <algorithm>
+/*
+* bfs.cpp
+* Author: Kyley Holder
+* Description: File containing implementation of Breadth-First Search (BFS) algorithm
+* Date: November 1, 2025
+*/
+#include "bfs.h"
+
 
 std::vector<std::string> bfs(const Graph& graph, const std::string& src, const std::string& dest) {
     const std::unordered_map<std::string, std::vector<Edge>>& adj = graph.getAdjacencyList();

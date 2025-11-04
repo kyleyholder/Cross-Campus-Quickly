@@ -1,5 +1,14 @@
+/*
+* fileParser.h
+* Author: Artyom Chvanko
+* Description: Header file for FileParser class
+* Date: November 4, 2025
+*/
+
+#ifndef FILEPARSER_H
+#define FILEPARSER_H
+
 #include <unordered_map>
-#include <vector>
 #include <QGraphicsScene>
 #include <QPolygonF>
 #include <QPointF>
@@ -10,6 +19,7 @@
 
 class FileParser{
 public:
+    //Node struct for storage of latitude and longitude pairs
     struct Node {
         double lat;
         double lon;
@@ -17,14 +27,15 @@ public:
 
     void parse(std::string fileName, QGraphicsScene &scene);
     void parseNodes(std::string fileName);
-    void parseWays(std::string fileName);
-    void parseWaysViz(std::string fileName, QGraphicsScene &scene);
-
+    void parseWays(std::string fileName, QGraphicsScene &scene);
 
     const std::unordered_map<std::string, FileParser::Node>& getNodes() const;
-    const std::unordered_map<std::string, std::vector<std::string>>& getWays() const;
 
-private:
+
     std::unordered_map<std::string, Node> nodes;
-    std::unordered_map<std::string, std::vector<std::string>> ways;
+    std::unordered_map<std::string, std::vector<std::string>> roads;
+private:
+
 };
+
+#endif

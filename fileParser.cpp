@@ -1,18 +1,24 @@
+/*
+* fileParser.cpp
+* Author: Artyom Chvanko
+* Description: Definition of FileParser class which performs file reading and adding the elements from the data file to the map
+* Date: November 4, 2025
+*/
+
 #include "fileParser.h"
 
+//Main parse method that calls two parser methods: parseNodes, parseWays
 void FileParser::parse(std::string fileName, QGraphicsScene &scene){
     parseNodes(fileName);
-    parseWaysViz(fileName, scene);
+    parseWays(fileName, scene);
 }
 
+//Method for returning nodes
 const std::unordered_map<std::string, FileParser::Node>& FileParser::getNodes() const {
     return nodes;
 }
 
-const std::unordered_map<std::string, std::vector<std::string>>& FileParser::getWays() const{
-    return ways;
-}
-
+//Parsing file and adding nodes to the map
 void FileParser::parseNodes(std::string fileName) {
     std::ifstream file(fileName);
 
@@ -22,6 +28,7 @@ void FileParser::parseNodes(std::string fileName) {
 
     std::string line;
     while (getline(file, line)) {
+        //If <node is found in the file, begin reading
         if (line.find("<node") != std::string::npos) {
             int idStart = static_cast<int>(line.find("id=\""));
             int latitudeStart = static_cast<int>(line.find("lat=\""));
@@ -53,47 +60,8 @@ void FileParser::parseNodes(std::string fileName) {
     }
 }
 
-void FileParser::parseWays(std::string fileName){
-    std::ifstream file(fileName);
-
-    if (!file.is_open()) {
-        std::cout << "Error opening file " << fileName << std::endl;
-        return;
-    }
-
-    std::string line;
-
-    bool recordingWay = false;
-    std::string currentWayId;
-    std::vector<std::string> currentNodeRefs;
-
-    while (getline(file, line)) {
-        if (line.find("<way") != std::string::npos) {
-            recordingWay = true;
-            currentNodeRefs = {};
-
-            int idStart = static_cast<int>(line.find("id=\""));
-            if (idStart != std::string::npos) {
-              idStart += 4;
-              int idEnd = static_cast<int>(line.find("\"", idStart));
-              currentWayId = line.substr(idStart, idEnd - idStart);
-            }
-        }
-
-        if (recordingWay && line.find("<nd ref=\"") != std::string::npos) {
-            int refStart = static_cast<int>(line.find("ref=\"")) + 5;
-            int refEnd = static_cast<int>(line.find("\"", refStart));
-            currentNodeRefs.push_back(line.substr(refStart, refEnd - refStart));
-        }
-
-        if (line.find("</way") != std::string::npos) {
-          recordingWay = false;
-          ways[currentWayId] = currentNodeRefs;
-        }
-    }
-}
-
-void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
+//Parsing ways and adding their visualization to the scene
+void FileParser::parseWays(std::string fileName, QGraphicsScene &scene){
     std::vector<std::string> nodeRefs;
 
     std::ifstream file(fileName);
@@ -111,8 +79,10 @@ void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
     bool isPark = false;
     bool isPool = false;
     std::vector<std::string> currentNodeRefs;
+    std::string currentWayId;
 
     while(getline(file, line)) {
+        //If <way is found in the file, begin reading
         if (line.find("<way") != std::string::npos) {
             recordingWay = true;
             isRoad = false;
@@ -121,8 +91,16 @@ void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
             isPark = false;
             isPool = false;
             currentNodeRefs = {};
+
+            int idStart = static_cast<int>(line.find("id=\""));
+            if (idStart != std::string::npos) {
+                idStart += 4;
+                int idEnd = static_cast<int>(line.find("\"", idStart));
+                currentWayId = line.substr(idStart, idEnd - idStart);
+            }
         }
 
+        //Determining the category of the current way
         if (recordingWay && line.find("<tag k=\"building\"") != std::string::npos) {
             isBuilding = true;
         }
@@ -141,7 +119,6 @@ void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
             }else{
                 isPark = true;
             }
-
         }
 
         if (recordingWay && line.find("<nd ref=\"") != std::string::npos) {
@@ -150,20 +127,23 @@ void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
             currentNodeRefs.push_back(line.substr(refStart, refEnd - refStart));
         }
 
+
         if (line.find("</way") != std::string::npos) {
             QPolygonF polygon;
+            //Adding elements of the map to the scene
             if (isRoad) {
                 QPen pen(Qt::white);
                 for (int i = 1; i < static_cast<int>(currentNodeRefs.size()); ++i) {
                     Node n1 = nodes[currentNodeRefs[i-1]];
                     Node n2 = nodes[currentNodeRefs[i]];
 
-                    if (n1.lat > 29.6356 && n1.lat < 29.6523 &&
-                    n1.lon > -82.3725 && n1.lon < -82.3391 & n2.lat > 29.6356 && n2.lat < 29.6523 &&
-                    n2.lon > -82.3725 && n2.lon < -82.3391) {
-                        scene.addLine((((((n2.lon+82)*1000))+391)*29), 1002-((((n2.lat-29)*1000)-356)*29), (((((n1.lon+82)*1000))+391)*29), 1002-((((n1.lat-29)*1000)-356)*29), pen);
-                    }
+
+                    scene.addLine((((((n2.lon+82)*1000))+391)*29), 1002-((((n2.lat-29)*1000)-356)*29), (((((n1.lon+82)*1000))+391)*29), 1002-((((n1.lat-29)*1000)-356)*29), pen);
+
+
+                    roads[currentWayId] = currentNodeRefs;
                 }
+
             }else if (isBuilding) {
                 for (const auto& nodeId : currentNodeRefs) {
                     Node n = nodes[nodeId];
@@ -185,7 +165,6 @@ void FileParser::parseWaysViz(std::string fileName, QGraphicsScene &scene){
                     double x = (((n.lon + 82) * 1000) + 391) * 29;
                     double y = 1002 - ((((n.lat - 29) * 1000) - 356) * 29);
                     polygon << QPointF(x, y);
-
                 }
 
                 QPen pen(Qt::blue);
