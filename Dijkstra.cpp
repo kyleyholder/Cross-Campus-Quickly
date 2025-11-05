@@ -18,10 +18,11 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
         return {src};
     }
 
-    // Visited and Unvisited Sets
+    // Visited Set
     std::unordered_set<std::string> visited;
-    std::set<std::pair<double, std::string>> unvisited;
-    unvisited.insert({0, src});
+    // Unvisted Priority Queue
+    std::priority_queue<std::pair<double, std::string>, std::vector<std::pair<double, std::string>>, std::greater<std::pair<double, std::string>>> unvisited;
+    unvisited.push({0, src});
 
     // Shorted Distance from src to dest
     std::unordered_map<std::string, double> d;
@@ -35,8 +36,8 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
 
     while(!unvisited.empty()) {
         // Find Node with Smallest Distance
-        std::string u = unvisited.begin()->second;
-        unvisited.erase(unvisited.begin());
+        auto [dist, u] = unvisited.top();
+        unvisited.pop();
 
         if(u == dest)
             break;
@@ -50,7 +51,7 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
             if(d[edge.neighbor] > d[u] + edge.weight) {
                 d[edge.neighbor] = d[u] + edge.weight;
                 p[edge.neighbor] = u;
-                unvisited.insert({d[u] + edge.weight, edge.neighbor});
+                unvisited.push({d[u] + edge.weight, edge.neighbor});
             }
         }
     }
@@ -68,6 +69,5 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
     if(shortestPath.back() != src)
         return {};
     std::reverse(shortestPath.begin(), shortestPath.end());
-
     return shortestPath;
 }
