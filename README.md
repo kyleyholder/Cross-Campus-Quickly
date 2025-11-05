@@ -9,13 +9,13 @@ Cross Campus Quickly is a program that finds the shortest walking path from poin
 - Graph data structure representation of the campus
 - Interactive side panel and window built with QT framework (coordinates, select algorithm, zoom in/out, line outlining path)
 
-  ## Technology & Requirements
-  - C++ 17 or later
-  - Qt 6
-  - A compatible compiler/toolchain: MSVC 64-bit or MinGW (depending on your Qt install)
-  - CLion, Visual Studio, or Qt-Creator or other IDE
+## Technology & Requirements
+- C++ 17 or later
+- Qt 6
+- A compatible compiler/toolchain: MSVC 64-bit or MinGW (depending on your Qt install)
+- CLion, Visual Studio, or Qt-Creator or other IDE
  
-  ## Getting Started
+## Getting Started
   1. **Install Qt**
      - Download from https://www.qt.io/download-dev 
   2. **Clone the Repository**
