@@ -14,4 +14,4 @@
 #include <algorithm>
 #include "Graph.h"
 
-std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, const std::string& dest);
+std::pair<std::vector<std::string>, double> Dijkstra(const Graph& graph, const std::string& src, const std::string& dest);

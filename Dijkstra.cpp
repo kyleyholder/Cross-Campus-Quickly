@@ -7,15 +7,15 @@
 
 #include "Dijkstra.h"
 
-std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, const std::string& dest) {
+std::pair<std::vector<std::string>, double> Dijkstra(const Graph& graph, const std::string& src, const std::string& dest) {
     const std::unordered_map<std::string, std::vector<Edge>>& adj = graph.getAdjacencyList();
 
     if(!adj.count(src) || !adj.count(dest)) {
-        return {};
+        return {{}, 0.0};
     }
 
     if(src == dest) {
-        return {src};
+        return {{src}, 0.0};
     }
 
     // Visited Set
@@ -56,6 +56,8 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
         }
     }
 
+    double totalDistance = d[dest];
+
     // Contruct Shortest Path from Predecessor (p) Map
     std::vector<std::string> shortestPath;
     std::string curr = dest;
@@ -67,7 +69,7 @@ std::vector<std::string> Dijkstra(const Graph& graph, const std::string& src, co
     }
 
     if(shortestPath.back() != src)
-        return {};
+        return {{}, 0.0};
     std::reverse(shortestPath.begin(), shortestPath.end());
-    return shortestPath;
+    return {shortestPath, totalDistance};
 }
