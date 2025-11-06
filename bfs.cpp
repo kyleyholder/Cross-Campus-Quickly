@@ -7,14 +7,14 @@
 #include "bfs.h"
 
 
-std::vector<std::string> bfs(const Graph& graph, const std::string& src, const std::string& dest) {
+std::pair<vector<std::string>, double> bfs(const Graph& graph, const std::string& src, const std::string& dest) {
     const std::unordered_map<std::string, std::vector<Edge>>& adj = graph.getAdjacencyList();
     if(!adj.count(src) || !adj.count(dest)) {
         return {};
     }
 
     if(src == dest) {
-        return {src};
+        return {{src}}, 0.0};
     }
 
     std::queue<std::string> q;
@@ -60,5 +60,19 @@ std::vector<std::string> bfs(const Graph& graph, const std::string& src, const s
     }
 
     std::reverse(path.begin(), path.end());
-    return path;
+
+    double total_distance = 0.0;
+    for(int i = 0; i + 1 < path.size(); ++i) {
+        const std::string& u = path[i];
+        const std::string& v = path[i + 1];
+
+        for(const auto& edge : adj.at(u)) {
+            if(edge.neighbor == v) {
+                total_distance += edge.weight;
+                break;
+            }
+        }
+    }
+
+    return {path, total_distance};
 }

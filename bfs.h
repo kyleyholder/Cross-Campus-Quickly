@@ -12,4 +12,4 @@
 #include <string>
 #include <algorithm>
 
-std::vector<std::string> bfs(const Graph& graph, const std::string& src, const std::string& dest);
+std::pair<std::vector<std::string>, double> bfs(const Graph& graph, const std::string& src, const std::string& dest);
