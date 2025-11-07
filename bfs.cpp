@@ -6,15 +6,15 @@
 */
 #include "bfs.h"
 
-
-std::pair<vector<std::string>, double> bfs(const Graph& graph, const std::string& src, const std::string& dest) {
+std::pair<std::vector<std::string>, double> bfs(const Graph& graph, const std::string& src, const std::string& dest) {
     const std::unordered_map<std::string, std::vector<Edge>>& adj = graph.getAdjacencyList();
     if(!adj.count(src) || !adj.count(dest)) {
         return {};
     }
 
+
     if(src == dest) {
-        return {{src}}, 0.0};
+        return {{src}, 0.0};
     }
 
     std::queue<std::string> q;
@@ -45,6 +45,7 @@ std::pair<vector<std::string>, double> bfs(const Graph& graph, const std::string
         }
     }
 
+    //if not found return the empty path
     if(!found) {
         return {};
     }
@@ -61,6 +62,7 @@ std::pair<vector<std::string>, double> bfs(const Graph& graph, const std::string
 
     std::reverse(path.begin(), path.end());
 
+    //loop to accumulate distance
     double total_distance = 0.0;
     for(int i = 0; i + 1 < path.size(); ++i) {
         const std::string& u = path[i];
@@ -74,5 +76,6 @@ std::pair<vector<std::string>, double> bfs(const Graph& graph, const std::string
         }
     }
 
+    //returning a pair of a vector with the nodes along the path and the total distance (not in miles)
     return {path, total_distance};
 }

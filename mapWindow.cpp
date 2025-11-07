@@ -18,11 +18,12 @@ MapWindow::MapWindow(std::string filename, QWidget* parent) : QGraphicsView(pare
     panel = new QWidget();
     panelLayout = new QVBoxLayout(panel);
 
-    labelLatitude1 = new QLabel("", panel);
-    labelLongitude1 = new QLabel("", panel);
-    labelLatitude2 = new QLabel("", panel);
-    labelLongitude2 = new QLabel("", panel);
+    labelLatitudeStart = new QLabel("", panel);
+    labelLongitudeStart = new QLabel("", panel);
+    labelLatitudeDestination = new QLabel("", panel);
+    labelLongitudeDestination = new QLabel("", panel);
     labelErrorMessage = new QLabel("", panel);
+    labelDistance = new QLabel("", panel);
     selectedAlgorithm = "Dijkstra's Algorithm";
 }
 
@@ -70,32 +71,47 @@ void MapWindow::drawWindow(std::string fileName) {
 
 
     //Creating labels for marking the components of the control panel
-    QLabel *label1 = new QLabel("SHORTEST PATH ALGORITHM");
-    //QLabel *labelDistanceOfPath = new QLabel("DISTANCE OF PATH");
-    QLabel *labelStartingPoint = new QLabel("STARTING POINT:");
-    QLabel *labelDestination = new QLabel("DESTINATION");
+    QLabel *sectionLabelShortestPathAlgorithm = new QLabel("SHORTEST PATH ALGORITHM");
+    QLabel *sectionLabelStartingPoint = new QLabel("STARTING POINT:");
+    QLabel *sectionLabelStartingPointLongitude = new QLabel("LONGITUDE:");
+    QLabel *sectionLabelStartingPointLatitude = new QLabel("LATITUDE:");
+    QLabel *sectionLabelDestinationLongitude = new QLabel("LONGITUDE:");
+    QLabel *sectionLabelDestinationLatitude = new QLabel("LATITUDE:");
+    QLabel *sectionLabelDestination = new QLabel("DESTINATION:");
+    QLabel *sectionLabelDistanceOfPath = new QLabel("DISTANCE OF PATH");
 
     //Setting font size and color for labels
-    label1->setStyleSheet("color: white; font-size: 16px;");
-    //labelDistanceOfPath->setStyleSheet("color: white; font-size: 16px;");
-    labelStartingPoint->setStyleSheet("color: blue; font-size: 16px;");
-    labelDestination->setStyleSheet("color: red; font-size: 16px;");
-    labelLongitude1->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
-    labelLatitude1->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
-    labelLongitude2->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
-    labelLatitude2->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
+    sectionLabelShortestPathAlgorithm->setStyleSheet("color: white; font-size: 16px;");
+    sectionLabelStartingPoint->setStyleSheet("color: #3e7fc9; font-size: 16px;");
+    sectionLabelDestination->setStyleSheet("color: red; font-size: 16px;");
+    sectionLabelDistanceOfPath->setStyleSheet("color: white; font-size: 16px;");
+    sectionLabelStartingPointLongitude->setStyleSheet("color: white;  font-size: 14px;");
+    sectionLabelStartingPointLatitude->setStyleSheet("color: white;  font-size: 14px;");
+    sectionLabelDestinationLongitude->setStyleSheet("color: white;  font-size: 14px;");
+    sectionLabelDestinationLatitude->setStyleSheet("color: white;  font-size: 14px;");
+    labelLongitudeStart->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
+    labelLatitudeStart->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
+    labelLongitudeDestination->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
+    labelLatitudeDestination->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
+    labelDistance->setStyleSheet("color: white; background-color: grey; font-size: 16px;");
     labelErrorMessage->setStyleSheet("color: red; font-size: 16px;");
 
     //Adding widgets(labels, buttons, combo boxe, etc.) to the panelLayout
-    panelLayout->addWidget(labelStartingPoint);
-    panelLayout->addWidget(labelLongitude1);
-    panelLayout->addWidget(labelLatitude1);
-    panelLayout->addWidget(labelDestination);
-    panelLayout->addWidget(labelLongitude2);
-    panelLayout->addWidget(labelLatitude2);
-    panelLayout->addWidget(label1);
+    panelLayout->addWidget(sectionLabelStartingPoint);
+    panelLayout->addWidget(sectionLabelStartingPointLongitude);
+    panelLayout->addWidget(labelLongitudeStart);
+    panelLayout->addWidget(sectionLabelStartingPointLatitude);
+    panelLayout->addWidget(labelLatitudeStart);
+    panelLayout->addWidget(sectionLabelDestination);
+    panelLayout->addWidget(sectionLabelDestinationLongitude);
+    panelLayout->addWidget(labelLongitudeDestination);
+    panelLayout->addWidget(sectionLabelDestinationLatitude);
+    panelLayout->addWidget(labelLatitudeDestination);
+    panelLayout->addWidget(sectionLabelShortestPathAlgorithm);
     panelLayout->addWidget(comboBox);
-    //panelLayout->addWidget(labelDistanceOfPath);
+    panelLayout->addWidget(comboBox);
+    panelLayout->addWidget(sectionLabelDistanceOfPath);
+    panelLayout->addWidget(labelDistance);
     panelLayout->addWidget(labelErrorMessage);
     panelLayout->addStretch(4);
     panelLayout->addWidget(zoomIn);
@@ -140,10 +156,10 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
         double y = (((((1002.0 - scenePos.y()) / 29) + 356) / 1000) + 29);
 
         QString g = QString::number(y);
-        labelLatitude1->setText(g);
+        labelLatitudeStart->setText(g);
 
         QString c = QString::number(x);
-        labelLongitude1->setText(c);
+        labelLongitudeStart->setText(c);
 
         firstClickNodeID = graph.findClosestNode(y, x, parser.nodes);
 
@@ -161,10 +177,10 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
 
 
         QString g = QString::number(y);
-        labelLatitude2->setText(g);
+        labelLatitudeDestination->setText(g);
 
         QString c = QString::number(x);
-        labelLongitude2->setText(c);
+        labelLongitudeDestination->setText(c);
 
         secondClickNodeID = graph.findClosestNode(y, x, parser.nodes);
 
@@ -180,33 +196,47 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
         std::string str1 = selectedAlgorithm.toStdString();
 
         if (selectedAlgorithm == str) {
-            std::vector<std::string> shortestPathToDraw = Dijkstra(graph, firstClickNodeID, secondClickNodeID);
+            std::pair<std::vector<std::string>, double> DijkstraOutputPair = Dijkstra(graph, firstClickNodeID, secondClickNodeID);
 
-            if (shortestPathToDraw.size() == 0) {
+            if (DijkstraOutputPair.first.size() == 0) {
                 labelErrorMessage->setText("There is no path between the points.");
+            }
+
+            std::string distance = std::to_string(63 * DijkstraOutputPair.second) + " mi"; //multiplying by 63 to convert to miles
+            QString distanceQString = QString::fromStdString(distance);
+
+            if (DijkstraOutputPair.first.size() != 0) {
+                labelDistance->setText(distanceQString);
             }
 
             //Adding path to the scene in the loop
             QPen pen(QColor(255, 102, 0, 255), 3);
-            for (int i = 1; i < static_cast<int>(shortestPathToDraw.size()); ++i) {
-                FileParser::Node n1 = parser.nodes[shortestPathToDraw[i-1]];
-                FileParser::Node n2 = parser.nodes[shortestPathToDraw[i]];
+            for (int i = 1; i < static_cast<int>(DijkstraOutputPair.first.size()); ++i) {
+                FileParser::Node n1 = parser.nodes[DijkstraOutputPair.first[i-1]];
+                FileParser::Node n2 = parser.nodes[DijkstraOutputPair.first[i]];
 
                 QGraphicsLineItem* line = scene.addLine((((((n2.lon+82)*1000))+391)*29), 1002-((((n2.lat-29)*1000)-356)*29), (((((n1.lon+82)*1000))+391)*29), 1002-((((n1.lat-29)*1000)-356)*29), pen);
                 pathLines.push_back(line);
             }
         }else{
-            std::vector<std::string> shortestPathToDraw = bfs(graph, firstClickNodeID, secondClickNodeID);
+            std::pair<std::vector<std::string>, double> bfsOutputPair = bfs(graph, firstClickNodeID, secondClickNodeID);
 
-            if (shortestPathToDraw.size() == 0) {
+            if (bfsOutputPair.first.size() == 0) {
                 labelErrorMessage->setText("There is no path between the points.");
+            }
+
+            std::string distance = std::to_string(63 * bfsOutputPair.second) + " mi"; //multiplying by 63 to convert to miles
+            QString distanceQString = QString::fromStdString(distance);
+
+            if (bfsOutputPair.first.size() != 0) {
+                labelDistance->setText(distanceQString);
             }
 
             //Adding path to the scene in the loop
             QPen pen(QColor(255, 102, 0, 255), 3);
-            for (int i = 1; i < static_cast<int>(shortestPathToDraw.size()); ++i) {
-                FileParser::Node n1 = parser.nodes[shortestPathToDraw[i-1]];
-                FileParser::Node n2 = parser.nodes[shortestPathToDraw[i]];
+            for (int i = 1; i < static_cast<int>(bfsOutputPair.first.size()); ++i) {
+                FileParser::Node n1 = parser.nodes[bfsOutputPair.first[i-1]];
+                FileParser::Node n2 = parser.nodes[bfsOutputPair.first[i]];
 
                 QGraphicsLineItem* line = scene.addLine((((((n2.lon+82)*1000))+391)*29), 1002-((((n2.lat-29)*1000)-356)*29), (((((n1.lon+82)*1000))+391)*29), 1002-((((n1.lat-29)*1000)-356)*29), pen);
                 pathLines.push_back(line);
@@ -217,11 +247,12 @@ void MapWindow::mousePressEvent(QMouseEvent *event)  {
         firstClickStatus = false;
         secondClickStatus = false;
 
-        labelLatitude1->setText("");
-        labelLongitude1->setText("");
-        labelLatitude2->setText("");
-        labelLongitude2->setText("");
+        labelLatitudeStart->setText("");
+        labelLongitudeStart->setText("");
+        labelLatitudeStart->setText("");
+        labelLongitudeDestination->setText("");
         labelErrorMessage->setText("");
+        labelDistance->setText("");
 
 
         if (line) {

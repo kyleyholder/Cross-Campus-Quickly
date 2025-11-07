@@ -8,7 +8,7 @@
 #ifndef MAPWINDOW_H
 #define MAPWINDOW_H
 
-// Included Qt libraries
+//Included Qt libraries
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -31,6 +31,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <vector>
 
 class MapWindow : public QGraphicsView {
 public:
@@ -54,10 +55,11 @@ private:
     Graph graph;
 
     //Labels for latitude and longitude of starting point and destination
-    QLabel *labelLatitude1;
-    QLabel *labelLongitude1;
-    QLabel *labelLatitude2;
-    QLabel *labelLongitude2;
+    QLabel *labelLatitudeStart;
+    QLabel *labelLongitudeStart;
+    QLabel *labelDistance;
+    QLabel *labelLatitudeDestination;
+    QLabel *labelLongitudeDestination;
     QLabel *labelErrorMessage;
 };
 #endif //MAPWINDOW_H
